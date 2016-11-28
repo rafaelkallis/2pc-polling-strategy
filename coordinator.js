@@ -3,23 +3,10 @@ const Queue = require('bluebird-queue');
 const Strategies = require('./strategies');
 const SubordinateError = require('./errors');
 
-const request_delay_fallback = 10;
-const strategy_fallback = Strategies.constant;
-const concurrency_fallback = 10;
-const timeout_fallback = 1000;
+module.exports = function Coordinator() {
+    this._subordinates = [];
 
-const response_delay_fallback = 10;
-const processing_delay_fallback = 50;
-const error_rate_fallback = 0;
-const reboot_delay_fallback = 1000;
-
-module.exports = class Coordinator {
-
-    constructor() {
-        this._subordinates = [];
-    }
-
-    attach_subordinate(subordinate) {
+    this.attach_subordinate = function (subordinate) {
         this._subordinates.push(subordinate);
     }
 
@@ -35,17 +22,17 @@ module.exports = class Coordinator {
      *      reboot_delay: value,
      * }
      */
-    commit(options = {}) {
+    this.commit = function (options) {
 
-        const request_delay = getOrFallback(options.request_delay, request_delay_fallback);
-        const strategy = getOrFallback(options.strategy, strategy_fallback);
-        const concurrency = getOrFallback(options.concurrency, concurrency_fallback);
-        const timeout = getOrFallback(options.timeout, timeout_fallback);
+        const request_delay = options.request_delay;
+        const strategy = options.strategy;
+        const concurrency = options.concurrency;
+        const timeout = options.timeout;
 
-        const response_delay = getOrFallback(options.response_delay, response_delay_fallback);
-        const processing_delay = getOrFallback(options.processing_delay, processing_delay_fallback);
-        const error_rate = getOrFallback(options.error_rate, error_rate_fallback);
-        const reboot_delay = getOrFallback(options.reboot_delay, reboot_delay_fallback);
+        const response_delay = options.response_delay;
+        const processing_delay = options.processing_delay;
+        const error_rate = options.error_rate;
+        const reboot_delay = options.reboot_delay;
 
         const queue = new Queue({ concurrency });
 
@@ -65,12 +52,5 @@ module.exports = class Coordinator {
         this._subordinates.map(subordinate => queue.add(commit_subordinate(subordinate, 0)));
 
         return queue.start().then(() => Promise.resolve());
-    }
-}
-
-function getOrFallback(value, fallback) {
-    if (typeof value === 'undefined') {
-        return fallback;
-    }
-    return value;
+    };
 }

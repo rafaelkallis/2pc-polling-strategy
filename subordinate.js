@@ -3,10 +3,8 @@ const SubordinateError = require('./errors');
 const Random = require('random-js');
 const random = new Random(Random.engines.mt19937().autoSeed());
 
-module.exports = class Subordinate {
-    constructor() {
-        this._active = true;
-    }
+module.exports = function Subordinate() {
+    this._active = true;
 
     /**
      * options: {
@@ -16,7 +14,7 @@ module.exports = class Subordinate {
      *      reboot_delay: value,
      * }
      */
-    commit(options) {
+    this.commit = function (options) {
 
         const response_delay = options.response_delay;
         const processing_delay = options.processing_delay;
