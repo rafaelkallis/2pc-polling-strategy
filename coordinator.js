@@ -6,7 +6,7 @@ const SubordinateError = require('./errors');
 module.exports = function Coordinator() {
     this._subordinates = [];
 
-    this.attach_subordinate = function (subordinate) {
+    this.attach_subordinate = function(subordinate) {
         this._subordinates.push(subordinate);
     }
 
@@ -22,35 +22,24 @@ module.exports = function Coordinator() {
      *      reboot_delay: value,
      * }
      */
-    this.commit = function (options) {
+    this.commit = function(options) {
 
-        const request_delay = options.request_delay;
-        const strategy = options.strategy;
-        const concurrency = options.concurrency;
-        const timeout = options.timeout;
-
-        const response_delay = options.response_delay;
-        const processing_delay = options.processing_delay;
-        const error_rate = options.error_rate;
-        const reboot_delay = options.reboot_delay;
-
-        const queue = new Queue({ concurrency });
-
-        const commit_subordinate = (subordinate, n_attempt) =>
-            Promise.delay(request_delay)
-                .then(() => subordinate.commit({
-                    response_delay,
-                    processing_delay,
-                    error_rate,
-                    reboot_delay
-                }))
-                .catch(SubordinateError, e => {
-                    Promise.delay(timeout + strategy(++n_attempt))
-                        .then(() => queue.add(commit_subordinate(subordinate, n_attempt)));
-                });
-
-        this._subordinates.map(subordinate => queue.add(commit_subordinate(subordinate, 0)));
-
-        return queue.start().then(() => Promise.resolve());
+        const queue = new Queue({ concurrency: options.concurrency });
+        queue.add(Promise.resolve);
+        return queue.start()
+            .then(() => Promise.map(this._subordinates, subordinate => new Promise(resolve => {
+                const commit_subordinate = (n_attempt) =>
+                    subordinate.commit({ error_rate: options.error_rate, reboot_delay: options.reboot_delay })
+                        .then(resolve)
+                        .catch(SubordinateError, e =>
+                            Promise.delay(options.timeout)
+                                .then(() => {
+                                    Promise.delay(options.strategy(n_attempt++))
+                                        .then(() => queue.add(commit_subordinate(subordinate, n_attempt)));
+                                })
+                        );
+                queue.add(commit_subordinate(subordinate, 1));
+            })))
+            .then(() => Promise.resolve());
     };
 }

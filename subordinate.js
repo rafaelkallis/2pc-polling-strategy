@@ -8,25 +8,18 @@ module.exports = function Subordinate() {
 
     /**
      * options: {
-     *      response_delay: value,
-     *      processing_delay: value,
      *      error_rate: value
      *      reboot_delay: value,
      * }
      */
     this.commit = function (options) {
 
-        const response_delay = options.response_delay;
-        const processing_delay = options.processing_delay;
-        const error_rate = options.error_rate;
-        const reboot_delay = options.reboot_delay;
-
         if (this._active) {
-            if (random.real(0, 1, false) > error_rate) {
-                return Promise.delay(processing_delay + response_delay);
+            if (random.real(0, 1, false) > options.error_rate) {
+                return Promise.resolve();
             } else {
                 this._active = false;
-                setTimeout(() => this._active = true, reboot_delay);
+                Promise.delay(options.reboot_delay).then(() => this._active = true);
             }
         }
         return Promise.reject(new SubordinateError());
