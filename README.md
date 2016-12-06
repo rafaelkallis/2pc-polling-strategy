@@ -16,7 +16,8 @@ The database ensures the integrity of data in a distributed transaction using th
 ### Protocol Diagram
 
 <div style="width: 100%; text-align: center;">
-<img src="./img/protocol.svg">
+
+![Protocol Diagram](./img/protocol.svg)
 </div>
 
 ##### An * next to the record type means that the record is forced to stable storage.
@@ -27,13 +28,15 @@ We assume that each tranaction runs through a different instance of the state ch
 ### Coordinator State Chart
 
 <div style="width: 100%; text-align: center;">
-<img src="./img/coordinator-state.svg">
+
+![Coordinator State Chart](./img/coordinator-state.svg)
 </div>
 
 ### Subordinate State Chart
 
 <div style="text-align: center; width: 100%;">
-<img src="./img/subordinate-state.svg">
+
+![Subordinate State Chart](./img/subordinate-state.svg)
 </div>
 
 ### Formalisation of the Problem
