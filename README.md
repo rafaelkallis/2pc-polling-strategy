@@ -2,15 +2,15 @@
 ### by [Rafael Kallis](http://rafaelkallis.com), [Elias Bernhaut](https://github.com/alpox)
 [![Build Status](https://travis-ci.org/rafaelkallis/2pc-polling-strategy.svg?branch=master)](https://travis-ci.org/rafaelkallis/2pc-polling-strategy)
 ___
- 
- ## Problem Definition
 
- Unlike a transaction on a local database, a distributed transaction involves altering data on multiple databases. Consequently, distributed transaction processing is more complicated, because the database must coordinate the committing or aborting the changes in a transaction as a self-contained unit. In other words, the entire transaction commits, or the entire transaction aborts.
+## Problem Definition
 
- ---
+Unlike a transaction on a local database, a distributed transaction involves altering data on multiple databases. Consequently, distributed transaction processing is more complicated, because the database must coordinate the committing or aborting the changes in a transaction as a self-contained unit. In other words, the entire transaction commits, or the entire transaction aborts.
 
- ## Two Phase Commit Protocol
-  
+---
+
+## Two Phase Commit Protocol
+
 The database ensures the integrity of data in a distributed transaction using the two-phase commit mechanism. In the prepare phase, the coordinator in the transaction asks the subordinates to promise to commit or abort the transaction. If all subordinates are able to commit the transaction, the transaction stages in the commit phase, otherwise it stages in the abort phase. During the commit phase, the coordinator asks all subordinates to commit the transaction. During the abort phase, all subordinates are asked to abort. You can view an illustration of the protocol below.
 
 ### Protocol Diagram
@@ -22,8 +22,7 @@ The database ensures the integrity of data in a distributed transaction using th
 
 ##### An * next to the record type means that the record is forced to stable storage.
 
-
-We assume that each tranaction runs through a different instance of the state charts below. When the transaction starts, the coordinator sends *prepare* messages to all subordinates. The coordinator awaits all subordinates to respond with their votes. If all subordinates responded with a *yes* vote, the coordinator sends *commit* messages to all subordinates. If any subordinate responded to the *prepare* message with a *no* or a timeout has occured, the coordinator sends *abort* messages to all subordinates. After sending *commit* (*abort*) messages, the coordinator awaits all subordinates to respond with an *ack* message. If a timeout occurres while waiting, the coordinator retransmitts the *commit* (*abort*) message to the respective subordinate. The transaction ends when all subordinates have responded with an *ack* message to the coordinator's *commit* (*abort*) message.
+We assume that each tranaction runs through a different instance of the state charts below. When the transaction starts, the coordinator sends *prepare* messages to all subordinates. The coordinator awaits all subordinates to respond with their votes. If all subordinates responded with a *yes* vote the coordinator sends *commit* messages to all subordinates. If any subordinate responded to the *prepare* message with a *no* or a timeout has occured, the coordinator sends *abort* messages to all subordinates. After sending *commit* (*abort*) messages, the coordinator awaits all subordinates to respond with an *ack* message. If a timeout occurres while waiting, the coordinator retransmitts the *commit* (*abort*) message to the respective subordinate. The transaction ends when all subordinates have responded with an *ack* message to the coordinator's *commit* (*abort*) message.
 
 ### Coordinator State Chart
 
