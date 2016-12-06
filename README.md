@@ -17,7 +17,7 @@ The database ensures the integrity of data in a distributed transaction using th
 
 <div style="width: 100%; text-align: center;">
 
-![Protocol Diagram](img/protocol.svg)
+![Protocol Diagram](img/protocol.svg?raw=true)
 
 </div>
 
@@ -29,7 +29,7 @@ We assume that each tranaction runs through a different instance of the state ch
 
 <div style="width: 100%; text-align: center;">
 
-![Coordinator State Chart](./img/coordinator-state.svg)
+![Coordinator State Chart](./img/coordinator-state.svg?raw=true)
 
 </div>
 
@@ -37,7 +37,7 @@ We assume that each tranaction runs through a different instance of the state ch
 
 <div style="text-align: center; width: 100%;">
 
-![Subordinate State Chart](./img/subordinate-state.svg)
+![Subordinate State Chart](./img/subordinate-state.svg?raw=true)
 
 </div>
 
