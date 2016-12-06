@@ -9,7 +9,6 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.4.6",
-    "bluebird-queue": "0.0.8",
     "random-js": "^1.0.8"
   },
   "devDependencies": {
