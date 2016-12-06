@@ -17,7 +17,7 @@ The database ensures the integrity of data in a distributed transaction using th
 
 <div style="width: 100%; text-align: center;">
 
-![Protocol Diagram](img/protocol.png "Protocol Diagram")
+![Protocol Diagram](img/protocol.png)
 
 </div>
 
@@ -29,7 +29,7 @@ We assume that each tranaction runs through a different instance of the state ch
 
 <div style="width: 100%; text-align: center;">
 
-![Coordinator State Chart](./img/coordinator.png "Coordinator State Chart")
+![Coordinator State Chart](./img/coordinator.png)
 
 </div>
 
