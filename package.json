@@ -1,11 +1,13 @@
 {
-  "name": "2pc-polling-strategy",
+  "name": "2pc-runtime-simulation",
   "version": "1.0.0",
-  "description": "",
+  "description": "Yet another 2pc runtime simulator.",
   "scripts": {
+    "simulator": "node simulator.js",
+    "rng": "node uniform-randomness-test.js",
     "test": "./node_modules/mocha/bin/mocha"
   },
-  "author": "Rafael Kallis, Elias Bernhaut",
+  "author": "Rafael Kallis",
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.4.6",

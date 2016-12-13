@@ -1,5 +1,4 @@
 const Promise = require('bluebird');
-const Strategies = require('./strategies');
 const SubordinateError = require('./errors');
 
 module.exports = function Coordinator() {
@@ -12,7 +11,6 @@ module.exports = function Coordinator() {
     /**
      * options: {
      *      request_delay: value,
-     *      strategy: value,
      *      concurrency: value,
      *      timeout: value,
      *      response_delay: value,
@@ -24,13 +22,13 @@ module.exports = function Coordinator() {
     this.commit = function (options) {
         return Promise.map(this._subordinates, subordinate => new Promise(resolve => {
             const commit_subordinate = (n_attempt) =>
-                Promise.delay(options.request_delay)
+                Promise.delay(options.message_delay)
                     .then(() => subordinate.commit({ error_rate: options.error_rate, reboot_delay: options.reboot_delay }))
                     .then(resolve)
                     .catch(SubordinateError, e =>
                         Promise.delay(options.timeout)
                             .then(() => {
-                                Promise.delay(options.strategy(n_attempt++, options.backoff))
+                                Promise.delay(options.backoff)
                                     .then(() => commit_subordinate(subordinate, n_attempt));
                             })
                     );
